@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>hhhhhhhhhhh</title>
+    <title>中秋节快乐！</title>
     <style>
 
         @import url(Build/Cesium/Widgets/widgets.css);
@@ -16,11 +16,28 @@
             padding: 0;
             overflow: hidden;
         }
+        #music {
+            position: absolute;
+            z-index: 9999;
+            top: 10px;
+            left: 30px;
+            width: 170px;
+        }
     </style>
 </head>
 <body>
     <script src="Build/Cesium/Cesium.js"></script>
     <script src="jquery-3.4.1.js"></script>
+    <div id="music">
+        <audio controls>
+            <source src="ElopeToTheMoon.wav" type="audio/wav">
+
+            您的浏览器不支持 audio 元素。
+        </audio>
+        <button class="cesium-button" onclick="startTime()">
+            Fireworks!
+        </button>
+    </div>
     <div id="cesiumContainer"></div>
     <script>
 
@@ -48,7 +65,7 @@
                 });
             }
         });
-        
+
         providerViewModels.push(LRO_LOLA_ClrShade_Global_256ppd_v06);
 
         //2.LO HR/MR Cam and Clementine UVVIS Hybrid Image Mosaic
@@ -260,14 +277,31 @@
 
         // 初始化Viewer时，直接加载对应imageryProvider
         var viewer = new Cesium.Viewer("cesiumContainer", {
+            geocoder: false,
             animation: true,
             imageryProviderViewModels: providerViewModels
-            
+
 
         });
 
 
         viewer.scene.moon.show = false;
+
+        function startTime() {
+            viewer.clock.shouldAnimate = true;
+        }
+
+        //拾取坐标
+        var handler1 = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        handler1.setInputAction(function (evt) {
+            var cartesian = viewer.camera.pickEllipsoid(evt.position, viewer.scene.globe.ellipsoid);
+            var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+            var lng = Cesium.Math.toDegrees(cartographic.longitude);//经度值
+            var lat = Cesium.Math.toDegrees(cartographic.latitude);//纬度值
+            var height = Math.ceil(viewer.camera.positionCartographic.height);
+            var mapPosition = { x: lng, y: lat, z: height };
+            console.log([mapPosition.x, mapPosition.y, mapPosition.z]);
+        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
         //烟花
         const scene = viewer.scene;
@@ -278,6 +312,7 @@
         const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
             Cesium.Cartesian3.fromDegrees(-75.59777, 40.03883)
         );
+
         const emitterInitialLocation = new Cesium.Cartesian3(0.0, 0.0, 100.0);
 
         let particleCanvas;
@@ -361,7 +396,7 @@
                     speed: 100.0,
                     imageSize: particlePixelSize,
                     emissionRate: 0,
-                    emitter: new Cesium.SphereEmitter(20),
+                    emitter: new Cesium.SphereEmitter(0.5),
                     bursts: bursts,
                     lifetime: lifetime,
                     updateCallback: force,
