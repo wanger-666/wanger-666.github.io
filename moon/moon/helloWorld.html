@@ -1,12 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <title>hhhhhhhhhhh</title>
-    <link href="build/cesium/widgets/widgets.css" rel="stylesheet" />
     <style>
 
-        /*@import url(Build/Cesium/Widgets/widgets.css);*/
+        @import url(Build/Cesium/Widgets/widgets.css);
 
         html,
         body,
@@ -17,18 +16,38 @@
             padding: 0;
             overflow: hidden;
         }
+
+        #music {
+            position: absolute;
+            z-index: 9999;
+            top: 10px;
+            left: 30px;
+            width: 170px;
+        }
     </style>
 </head>
 <body>
+
+    <div id="music">
+        <audio controls>
+            <source src="ElopeToTheMoon.wav" type="audio/wav">
+
+            您的浏览器不支持 audio 元素。
+        </audio>
+        <button class="cesium-button" onclick="startTime()">
+            Fireworks!
+        </button>
+    </div>
     <script src="Build/Cesium/Cesium.js"></script>
     <script src="jquery-3.4.1.js"></script>
     <!--<script defer src="show3DTiles.js"></script>-->
     <div id="cesiumContainer"></div>
+
     <script>
 
 
-//ion key
-Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZGEzYzk3Yi02ZmZmLTRjODUtYmUxYS0wZDc5OTc4MTRmNGIiLCJpZCI6MjYwOTMsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1ODcyMDU0OTh9.wqz5wWBCGA5kJdc0h14w582H4Z8HjXHudzVJZIloHBk';
+        //ion key
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZGEzYzk3Yi02ZmZmLTRjODUtYmUxYS0wZDc5OTc4MTRmNGIiLCJpZCI6MjYwOTMsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1ODcyMDU0OTh9.wqz5wWBCGA5kJdc0h14w582H4Z8HjXHudzVJZIloHBk';
 
         // Clem_UVVIS_FeO_Clr_Global_152ppd tiles (RESTful)
         var clem = new Cesium.WebMapTileServiceImageryProvider({
@@ -52,27 +71,30 @@ Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOi
             tooltip: '月球表面彩色山体阴影',
             creationFunction: function () {
                 return new Cesium.CesiumTerrainProvider({
-                    url: 'http://localhost:8086/MoonDEM2',
+                    url: 'http://localhost:9000/terrain/65fbb0d02cc011ed995a4733ec9d3893',
 
                     requestVertexNormals: true
                 })
             }
         });
-        
+
         terrainModels.push(LRO_LOLA_ClrShade_Global_256ppd_v06);
 
         // 初始化Viewer时，直接加载对应额imageryProvider
         var viewer = new Cesium.Viewer("cesiumContainer", {
+            geocoder:false,
             infoBox: false,
             imageryProvider: clem,
             baseLayerPicker: true,
             terrainProviderViewModels: terrainModels,
-            terrainExaggeration:3
+            terrainExaggeration: 3
         });
 
+        function startTime() {
+            viewer.clock.shouldAnimate = true;
+        }
 
 
-       
 
 
 
